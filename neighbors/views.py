@@ -7,6 +7,13 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from . import models
+from . import serializers
+
+def create_account(request):
+    data = models.Neighbor.objects.all()
+    serializer = serializers.NeighborSerializer(data, many=True)
+    return JsonResponse({'neighbors' : serializer.data})
 
 # Create your views here.
 def login_neighbor(request):
