@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
-from rest_framework.views import APIView
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
 import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -10,12 +12,15 @@ from django.views.decorators.csrf import csrf_exempt
 from . import models
 from . import serializers
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def create_account(request):
     data = models.Neighbor.objects.all()
     serializer = serializers.NeighborSerializer(data, many=True)
     return JsonResponse({'neighbors' : serializer.data})
 
-# Create your views here.
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def login_neighbor(request):
     if request.method == 'POST':
         username = request.POST['username']

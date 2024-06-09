@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from api.models import Zipcode
 from api.models import Neighborhood
@@ -13,16 +13,41 @@ class NeighborManager(BaseUserManager):
         user.save(using=self._db)
         return user
     
-class Neighbor(AbstractBaseUser):
-    neighbor_id     = models.PositiveBigIntegerField(primary_key=True)
-    signup_datetime = models.DateTimeField(auto_now_add=True)
-    username        = models.CharField(max_length=30, unique=True)
-    email           = models.EmailField(unique=True)
-    zipcode         = models.ForeignKey(Zipcode, on_delete=models.CASCADE)
-    verified        = models.BooleanField(default=False)
-    neighborhood    = models.ForeignKey(Neighborhood, on_delete=models.CASCADE, default=0)
-    is_active       = models.BooleanField(default=True)
-    _is_staff       = models.BooleanField(default=False)
+class Neighbor(AbstractBaseUser, PermissionsMixin):
+    neighbor_id         = models.PositiveBigIntegerField(primary_key=True)
+    signup_datetime     = models.DateTimeField(auto_now_add=True)
+    username            = models.CharField(max_length=30, unique=True)
+    email               = models.EmailField(unique=True)
+    zipcode             = models.ForeignKey(Zipcode, on_delete=models.CASCADE)
+    verified            = models.BooleanField(default=False)
+    neighborhood        = models.ForeignKey(Neighborhood, on_delete=models.CASCADE, default=0)
+    is_active           = models.BooleanField(default=True)
+    is_staff            = models.BooleanField(default=False)
+    is_admin            = models.BooleanField(default=False)
+    
+    def get_full_name(self):
+        pass
+
+    def get_short_name(self):
+        pass
+
+    @property
+    def is_superuser(self):
+        return self.is_admin
+
+    @property
+    def is_staff(self):
+       return self.is_admin
+
+    def has_perm(self, perm, obj=None):
+       return self.is_admin
+
+    def has_module_perms(self, app_label):
+       return self.is_admin
+
+    @is_staff.setter
+    def is_staff(self, value):
+        self._is_staff = value
 
     objects = NeighborManager()
 
