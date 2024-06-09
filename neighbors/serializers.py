@@ -4,7 +4,7 @@ from . import models
 class NeighborSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Neighbor 
-        fields = ['neighbor_id', 'password', 'username', 'email', 'verified', 'is_active', 'zipcode', 'neighborhood']
+        fields = ['id', 'password', 'username', 'email', 'verified', 'is_active', 'zipcode', 'neighborhood']
     
     def create(self, validated_data):
         neighbor = models.Neighbor.objects.create(

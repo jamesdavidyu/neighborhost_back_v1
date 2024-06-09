@@ -7,18 +7,26 @@ from rest_framework_simplejwt.tokens import RefreshToken
 import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from django.http import JsonResponse
+# from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from . import models
 from . import serializers
 
-@api_view(['POST']) # comment this and next line out to see json
-@permission_classes([IsAuthenticated])
+@api_view(['GET', 'POST']) # comment this and next line out to see json
+# # @permission_classes([IsAuthenticated])
 def create_account(request):
-    data = models.Neighbor.objects.all()
-    serializer = serializers.NeighborSerializer(data, many=True)
-    return JsonResponse({'neighbors' : serializer.data})
+    if request.method == 'GET':
+        data = models.Neighbor.objects.all() # change data variable name
+        serializer = serializers.NeighborSerializer(data, many=True)
+        return Response({'neighbors' : serializer.data})
+    elif request.method == 'POST':
+        serializer = serializers.NeighborSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'neighbors' : serializer.data}, status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# django wednesday's example...
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def login_neighbor(request):
