@@ -12,7 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from . import models
 from . import serializers
 
-@api_view(['POST'])
+@api_view(['POST']) # comment this and next line out to see json
 @permission_classes([IsAuthenticated])
 def create_account(request):
     data = models.Neighbor.objects.all()

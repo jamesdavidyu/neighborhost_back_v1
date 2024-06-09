@@ -14,7 +14,7 @@ class NeighborManager(BaseUserManager):
         return user
     
 class Neighbor(AbstractBaseUser, PermissionsMixin):
-    neighbor_id         = models.PositiveBigIntegerField(primary_key=True)
+    id                  = models.PositiveBigIntegerField(primary_key=True)
     signup_datetime     = models.DateTimeField(auto_now_add=True)
     username            = models.CharField(max_length=30, unique=True)
     email               = models.EmailField(unique=True)
